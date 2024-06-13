@@ -36,7 +36,7 @@ export class PluginLoader {
     const resolvers = this.plugins.flatMap((plugin) => plugin.resolvers || []) as Function[];
 
     if (resolvers.length === 0) {
-      throw new Error("No resolvers found. Please ensure at least one resolver is provided.");
+      throw new Error('No resolvers found. Please ensure at least one resolver is provided.');
     }
 
     return buildSchema({

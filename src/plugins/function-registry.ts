@@ -24,7 +24,7 @@ class FunctionRegistry {
   }
 
   public getFunctionsOfType(type: string): Function[] {
-    return this.functionsOfType[type]?.map(f => f.fn) || [];
+    return this.functionsOfType[type]?.map((f) => f.fn) || [];
   }
 }
 

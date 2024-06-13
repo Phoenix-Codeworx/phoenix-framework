@@ -15,10 +15,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async createUser(
-    @Arg('name') name: string,
-    @Arg('email') email: string
-  ) {
+  async createUser(@Arg('name') name: string, @Arg('email') email: string) {
     return this.userService.createUser(name, email);
   }
 }

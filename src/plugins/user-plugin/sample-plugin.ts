@@ -4,16 +4,8 @@ import { User } from './entities/user.ts';
 import { UserModel } from './entities/user.ts';
 import { eventSystem } from '../../event/event-system.ts';
 import { Container } from 'typedi';
-import {
-  GraphQLNonNull,
-  GraphQLString,
-  GraphQLList,
-  GraphQLObjectType,
-} from 'graphql';
-import type {
-  GraphQLFieldConfigMap,
-  GraphQLSchema,
-} from 'graphql';
+import { GraphQLNonNull, GraphQLString, GraphQLList, GraphQLObjectType } from 'graphql';
+import type { GraphQLFieldConfigMap, GraphQLSchema } from 'graphql';
 
 @Service()
 class SamplePlugin implements Plugin {

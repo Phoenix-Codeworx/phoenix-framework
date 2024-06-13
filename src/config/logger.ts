@@ -13,14 +13,14 @@ const logger = createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: combine(
     timestamp(),
-    json() // Log in JSON format for compatibility with Kibana
+    json(), // Log in JSON format for compatibility with Kibana
   ),
   transports: [
     new transports.Console({
       format: combine(
         colorize(), // Colorize the output
-        consoleFormat // Use custom format for console
-      )
+        consoleFormat, // Use custom format for console
+      ),
     }),
     new transports.DailyRotateFile({
       filename: 'logs/application-%DATE%.log',
@@ -28,10 +28,10 @@ const logger = createLogger({
       maxFiles: '14d',
       format: combine(
         timestamp(),
-        json() // Log in JSON format
-      )
-    })
-  ]
+        json(), // Log in JSON format
+      ),
+    }),
+  ],
 });
 
 export default logger;
