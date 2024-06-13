@@ -1,31 +1,32 @@
 {
   "compilerOptions": {
-    // Enable latest features
-    "lib": ["ESNext", "DOM"],
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleDetection": "force",
-    "jsx": "react-jsx",
-    "allowJs": true,
+    "lib": ["ESNext", "DOM"],  // Ensures compatibility with modern JavaScript features and browser APIs.
+    "target": "ESNext",  // Uses the latest ECMAScript version as the compilation target.
+    "module": "ESNext",  // Uses the latest ECMAScript module system.
+    "moduleDetection": "force",  // Forces module detection, useful for ensuring consistency.
+    "jsx": "react-jsx",  // Uses the JSX transform for React.
+    "allowJs": true,  // Allows JavaScript files to be compiled.
 
-    // Bundler mode
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
+    "moduleResolution": "node",  // Uses Node's module resolution strategy.
+    "allowImportingTsExtensions": true,  // Allows importing TypeScript files with extensions.
+    "verbatimModuleSyntax": true,  // Maintains the original module syntax in the output.
+    "noEmit": true,  // Prevents emitting compiled files.
 
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
+    "strict": true,  // Enables all strict type-checking options.
+    "skipLibCheck": true,  // Skips type checking of declaration files.
+    "noFallthroughCasesInSwitch": true,  // Ensures no fallthrough cases in switch statements.
 
-    // Some stricter flags (disabled by default)
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,  // Allows unused local variables (set to false for flexibility).
+    "noUnusedParameters": false,  // Allows unused parameters (set to false for flexibility).
+    "noPropertyAccessFromIndexSignature": false,  // Disallows property access via index signature.
 
-    // Required for decorators and metadata
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
-  }
+    "emitDecoratorMetadata": true,  // Enables emitting decorator metadata (required by Typegoose).
+    "experimentalDecorators": true,  // Enables experimental support for decorators.
+
+    "esModuleInterop": true,  // Ensures interoperability between CommonJS and ES Modules.
+    "resolveJsonModule": true,  // Allows importing JSON modules.
+    "allowSyntheticDefaultImports": true  // Allows default imports from modules with no default export.
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],  // Includes source and test files in the compilation.
+  "exclude": ["node_modules", "dist"]  // Excludes node_modules and dist directories from the compilation.
 }
