@@ -14,8 +14,4 @@ export class User {
   email!: string;
 }
 
-// Debugging step: Log metadata for User class
-console.log(Reflect.getMetadata('design:type', User.prototype, 'name'));
-console.log(Reflect.getMetadata('design:type', User.prototype, 'email'));
-
 export const UserModel = getModelForClass(User);
