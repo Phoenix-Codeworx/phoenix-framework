@@ -5,11 +5,11 @@ import { Field, ObjectType } from 'type-graphql';
 export class User {
   @Field(() => String)
   @prop({ required: true })
-  name!: string; // Use definite assignment assertion
+  name!: string;
 
   @Field(() => String)
   @prop({ required: true, unique: true })
-  email!: string; // Use definite assignment assertion
+  email!: string;
 }
 
 export const UserModel = getModelForClass(User);

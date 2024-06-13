@@ -3,7 +3,7 @@ import { Inject, Service } from 'typedi';
 import { User } from '../entities/user';
 import { UserService } from '../services/user-service';
 
-@Service() // Ensure the service decorator is applied
+@Service()
 @Resolver()
 export class UserResolver {
   @Inject(() => UserService)

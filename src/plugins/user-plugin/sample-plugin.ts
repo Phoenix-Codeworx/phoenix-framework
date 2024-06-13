@@ -1,8 +1,8 @@
 import { Service } from 'typedi';
-import type { Plugin } from './plugin';
-import { User } from '../entities/user';
-import { UserModel } from '../entities/user';
-import { eventSystem } from '../event/event-system';
+import type { Plugin } from '../plugin.ts';
+import { User } from './entities/user.ts';
+import { UserModel } from './entities/user.ts';
+import { eventSystem } from '../../event/event-system.ts';
 import { Container } from 'typedi';
 import {
   GraphQLNonNull,
