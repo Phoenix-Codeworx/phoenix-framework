@@ -6,6 +6,7 @@ import { connectToDatabase } from './config/database';
 import { PluginLoader } from './plugins/plugin-loader';
 import { samplePlugin } from './plugins/sample-plugin';
 import env from './config/config';
+import logger from './config/logger';
 
 async function startServer() {
   await connectToDatabase();
@@ -26,7 +27,7 @@ async function startServer() {
 
   const port = env.PORT;
   app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}${server.graphqlPath}`);
+    logger.info(`Server is running at http://localhost:${port}${server.graphqlPath}`, { context: 'server' });
   });
 }
 
