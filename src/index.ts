@@ -1,10 +1,8 @@
 import 'reflect-metadata';
 import express, { type Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
-import { createSchema } from './schema';
 import { connectToDatabase } from './config/database';
 import { PluginLoader } from './plugins/plugin-loader';
-import { samplePlugin } from './plugins/sample-plugin';
 import env from './config/config';
 import logger from './config/logger';
 
@@ -12,9 +10,9 @@ async function startServer() {
   await connectToDatabase();
 
   const pluginLoader = new PluginLoader();
-  pluginLoader.load(samplePlugin);
+  pluginLoader.loadPlugins();
 
-  const schema = await createSchema();
+  const schema = await pluginLoader.createSchema();
 
   const server = new ApolloServer({
     schema,

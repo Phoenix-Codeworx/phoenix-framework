@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import { Container } from 'typedi';
-import { UserResolver } from '../resolvers/user-resolver';
+import { UserResolver } from '../plugins/user-plugin/resolvers/user-resolver';
 
 export async function createSchema() {
   return buildSchema({
