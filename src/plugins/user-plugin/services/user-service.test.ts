@@ -30,7 +30,6 @@ describe('UserService', () => {
   });
 
   it('should create and save a user using UserService', async () => {
-    console.log('Test: should create and save a user using UserService');
     const newUser: User = { name: 'Jane Doe', email: 'jane@example.com' };
 
     userDocumentInstance = {
@@ -42,7 +41,6 @@ describe('UserService', () => {
       }
     } as UserDocument;
 
-    console.log('Setting up create method mock');
     when(userModelMock.create(anything())).thenReturn(Promise.resolve(userDocumentInstance) as any);
     UserModel.create = instance(userModelMock).create;
     try {
@@ -55,7 +53,6 @@ describe('UserService', () => {
   });
 
   it('should return all users using UserService', async () => {
-    console.log('Test: should return all users using UserService');
     const mockUsers: User[] = [
       { name: 'John Doe', email: 'john@example.com' },
       { name: 'Jane Doe', email: 'jane@example.com' },
@@ -67,7 +64,6 @@ describe('UserService', () => {
 
     UserModel.find = instance(userModelMock).find;
 
-    console.log('Calling getAllUsers on UserService');
     const users = await userService.getAllUsers();
     expect(users).toEqual(mockUsers);
   });
