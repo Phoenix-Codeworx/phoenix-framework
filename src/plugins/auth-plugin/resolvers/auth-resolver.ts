@@ -5,6 +5,7 @@ import logger from '../../../config/logger';
 import { User } from '../entities/user'; // Ensure this path is correct
 import { Service } from 'typedi';
 import jwt from 'jsonwebtoken';
+import { getEnforcer } from '../../../rbac';
 
 const loggerCtx = 'auth-resolver';
 
@@ -15,12 +16,18 @@ export class AuthResolver {
   async register(
     @Arg('email') email: string,
     @Arg('password') password: string,
-    @Arg('name') name: string
+    @Arg('name') name: string,
+    @Arg('role', { defaultValue: 'user' }) role: string // Default role to 'user'
   ): Promise<User> {
     logger.info(`Registering user: ${name}/${email}`, loggerCtx);
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new UserModel({ email, password: hashedPassword, name, role: 'user' });
+    const user = new UserModel({ email, password: hashedPassword, name, role });
     await user.save();
+
+    // Add user-role mapping to Casbin
+    const enforcer = await getEnforcer();
+    await enforcer.addRoleForUser(user._id.toString(), role);
+
     return user;
   }
 
@@ -51,5 +58,28 @@ export class AuthResolver {
       throw new Error('Not authorized');
     }
     return UserModel.find().exec();
+  }
+
+  @Mutation(() => Boolean)
+  async addRole(
+    @Arg('role') role: string,
+    @Arg('permissions', () => [String]) permissions: string[]
+  ): Promise<boolean> {
+    const enforcer = await getEnforcer();
+    for (const permission of permissions) {
+      const [obj, act] = permission.split(':');
+      await enforcer.addPolicy(role, obj, act);
+    }
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async assignRole(
+    @Arg('userId') userId: string,
+    @Arg('role') role: string
+  ): Promise<boolean> {
+    const enforcer = await getEnforcer();
+    await enforcer.addRoleForUser(userId, role);
+    return true;
   }
 }

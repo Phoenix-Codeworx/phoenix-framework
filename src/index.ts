@@ -9,13 +9,15 @@ import { authenticate } from './middleware/auth';
 import { PluginLoader } from './plugins/plugin-loader';
 import { isIntrospectionQuery } from './utils/introspection-check';
 import { shouldBypassAuth } from './utils/should-bypass-auth';
-
+import { bootstrap } from './plugins/auth-plugin/bootstrap';
+import sanitizeLog from './sanitize-log.ts';
 
 const loggerCtx = 'index'
 
 async function startServer() {
   await connectToDatabase();
   await initEnforcer(); // Initialize Casbin
+  await bootstrap(); // Bootstrap the application with a superuser
 
   const pluginLoader = new PluginLoader();
   pluginLoader.loadPlugins();
@@ -25,9 +27,9 @@ async function startServer() {
   const server = new ApolloServer({
     schema,
     introspection: true, // Ensure introspection is enabled
-    context: ({ req }) => ({
+    context: async ({ req }) => ({
       user: req.user, // User object from middleware
-      enforcer: getEnforcer(), // Casbin enforcer instance
+      enforcer: await getEnforcer(), // Casbin enforcer instance
     }),
   });
 
@@ -69,6 +71,9 @@ async function startServer() {
       // If there is no query in the request body, continue with authentication
       authenticate(req, res, next);
     }
+    const sanitizedReqInfo = sanitizeLog(reqInfo);
+    const logLine = JSON.stringify(sanitizedReqInfo, null, 0);
+    logger.verbose(`reqInfo: ${logLine}`, loggerCtx);
   });
 
   server.applyMiddleware({ app });
