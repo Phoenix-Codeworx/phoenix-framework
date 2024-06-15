@@ -44,7 +44,7 @@ class PluginLoader {
       }
       const originalResolver = resolverArray[originalResolverIndex].prototype[resolverName];
       resolverArray[originalResolverIndex].prototype[resolverName] = wrapper(originalResolver);
-    }
+    },
   };
 
   loadPlugins() {
@@ -52,7 +52,7 @@ class PluginLoader {
 
     // Explicitly load cart-plugin and discount-plugin first
     const specificPlugins = ['cart-plugin', 'discount-plugin'];
-    specificPlugins.forEach(pluginName => {
+    specificPlugins.forEach((pluginName) => {
       const pluginPath = join(pluginsDir, pluginName);
       if (statSync(pluginPath).isDirectory()) {
         try {
@@ -97,7 +97,7 @@ class PluginLoader {
   }
 
   initializePlugins() {
-    this.plugins.forEach(plugin => {
+    this.plugins.forEach((plugin) => {
       try {
         if (plugin.initialize) {
           plugin.initialize(this.context);
@@ -129,7 +129,7 @@ class PluginLoader {
   }
 
   registerModels() {
-    Object.keys(this.context.models).forEach(modelName => {
+    Object.keys(this.context.models).forEach((modelName) => {
       mongoose.model(modelName, this.context.models[modelName].schema);
     });
   }

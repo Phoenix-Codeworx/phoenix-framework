@@ -26,7 +26,7 @@ class CartResolver {
   }
 
   @Mutation(() => Cart)
-  async addItemToCart(@Arg("cartId") cartId: string, @Arg("item") item: string): Promise<Cart> {
+  async addItemToCart(@Arg('cartId') cartId: string, @Arg('item') item: string): Promise<Cart> {
     const CartModel = Container.get('CartModel') as ReturnType<typeof getModelForClass>;
     const objectId = new Types.ObjectId(cartId); // Convert cartId to ObjectId using new keyword
     const cart = await CartModel.findById(objectId).exec();
@@ -50,9 +50,10 @@ export default {
     context.extendResolvers('Cart', [CartResolver]);
 
     // Logging the methods of CartResolver
-    const resolverMethods = Object.getOwnPropertyNames(CartResolver.prototype)
-      .filter(method => method !== 'constructor');
+    const resolverMethods = Object.getOwnPropertyNames(CartResolver.prototype).filter(
+      (method) => method !== 'constructor',
+    );
     console.log('Registered Cart resolvers:', context.resolvers['Cart']);
     console.log('Methods in CartResolver:', resolverMethods);
-  }
+  },
 };

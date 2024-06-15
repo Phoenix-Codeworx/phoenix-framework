@@ -37,7 +37,7 @@ async function startServer() {
       context: async ({ req }) => ({
         user: req.user, // User object from middleware
         enforcer: await getEnforcer(), // Casbin enforcer instance
-        pluginsContext: pluginLoader.context // Add the global context here
+        pluginsContext: pluginLoader.context, // Add the global context here
       }),
     });
 

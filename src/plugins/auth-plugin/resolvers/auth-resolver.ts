@@ -19,7 +19,6 @@ export class AuthResolver {
     this.userService = new UserService();
   }
 
-
   @Mutation(() => User)
   async register(
     @Arg('email') email: string,

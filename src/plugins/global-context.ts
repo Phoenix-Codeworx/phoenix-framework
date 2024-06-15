@@ -5,7 +5,7 @@ export type ResolverMap = {
 };
 
 export interface GlobalContext {
-  models: { [key: string]: { schema: Schema, model: any } };
+  models: { [key: string]: { schema: Schema; model: any } };
   resolvers: { [key: string]: Function[] };
   extendModel: (name: string, extension: (schema: Schema) => void) => void;
   extendResolvers: (name: string, extension: Function[]) => void;
