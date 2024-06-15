@@ -12,7 +12,7 @@ import { shouldBypassAuth } from './utils/should-bypass-auth';
 import { bootstrap } from './plugins/auth-plugin/bootstrap';
 import sanitizeLog from './sanitize-log.ts';
 
-const loggerCtx = 'index'
+const loggerCtx = 'index';
 
 async function startServer() {
   await connectToDatabase();
@@ -46,7 +46,7 @@ async function startServer() {
       method: req.method,
       ip: req.ip,
       headers: req.headers,
-      operation: {}
+      operation: {},
     };
 
     if (req.body && req.body.query) {

@@ -10,7 +10,7 @@ export const bootstrap = async () => {
       email: 'superuser@example.com',
       password: await bcrypt.hash('superpassword', 10), // Use a secure password
       name: 'Super User',
-      role: 'superadmin'
+      role: 'superadmin',
     });
     await superuser.save();
 
@@ -22,7 +22,7 @@ export const bootstrap = async () => {
       ['superadmin', 'user', 'read'],
       ['superadmin', 'user', 'write'],
       ['superadmin', 'data', 'read'],
-      ['superadmin', 'data', 'write']
+      ['superadmin', 'data', 'write'],
       // Add more permissions as needed
     ];
 

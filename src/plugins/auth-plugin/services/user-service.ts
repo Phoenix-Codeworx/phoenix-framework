@@ -7,8 +7,8 @@ export class UserService {
     return UserModel.find().exec();
   }
 
-  async createUser(name: string, email: string): Promise<User> {
-    const user = new UserModel({ name, email });
+  async createUser(name: string, email: string, password: string): Promise<User> {
+    const user = new UserModel({ name, email, password });
     return user.save();
   }
 }

@@ -17,7 +17,7 @@ export class AuthResolver {
     @Arg('email') email: string,
     @Arg('password') password: string,
     @Arg('name') name: string,
-    @Arg('role', { defaultValue: 'user' }) role: string // Default role to 'user'
+    @Arg('role', { defaultValue: 'user' }) role: string, // Default role to 'user'
   ): Promise<User> {
     logger.info(`Registering user: ${name}/${email}`, loggerCtx);
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -32,10 +32,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => String)
-  async login(
-    @Arg('email') email: string,
-    @Arg('password') password: string
-  ): Promise<string> {
+  async login(@Arg('email') email: string, @Arg('password') password: string): Promise<string> {
     const user = await UserModel.findOne({ email });
     if (!user) {
       throw new Error('Invalid credentials');
@@ -63,7 +60,7 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   async addRole(
     @Arg('role') role: string,
-    @Arg('permissions', () => [String]) permissions: string[]
+    @Arg('permissions', () => [String]) permissions: string[],
   ): Promise<boolean> {
     const enforcer = await getEnforcer();
     for (const permission of permissions) {
@@ -74,10 +71,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  async assignRole(
-    @Arg('userId') userId: string,
-    @Arg('role') role: string
-  ): Promise<boolean> {
+  async assignRole(@Arg('userId') userId: string, @Arg('role') role: string): Promise<boolean> {
     const enforcer = await getEnforcer();
     await enforcer.addRoleForUser(userId, role);
     return true;
