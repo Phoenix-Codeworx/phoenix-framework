@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { UserModel } from './entities/user';
+import { UserModel } from './models/user';
 import { getEnforcer } from '../../rbac';
 import logger from '../../config/logger';
 

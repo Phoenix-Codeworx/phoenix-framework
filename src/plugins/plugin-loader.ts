@@ -6,14 +6,7 @@ import { join } from 'path';
 import logger from '../config/logger';
 import mongoose, { Schema } from 'mongoose';
 import { type GlobalContext, type ResolverMap } from './global-context';
-
-interface Plugin {
-  name: string;
-  type: string;
-  resolvers?: Function[];
-  register?: (container: typeof Container, context: GlobalContext) => void;
-  initialize?: (context: GlobalContext) => void;
-}
+import { type Plugin } from './plugin-interface';
 
 class PluginLoader {
   private plugins: Plugin[] = [];

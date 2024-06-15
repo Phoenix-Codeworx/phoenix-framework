@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { User, UserModel } from '../entities/user';
+import { User, UserModel } from '../models/user';
 import bcrypt from 'bcrypt';
 import { getEnforcer } from '../../../rbac.ts';
 
