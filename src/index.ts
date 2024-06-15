@@ -7,9 +7,11 @@ import logger from './config/logger';
 import { initEnforcer, getEnforcer } from './rbac';
 import { authenticate } from './middleware/auth';
 import { PluginLoader } from './plugins/plugin-loader';
-import { Container } from 'typedi';
 import { isIntrospectionQuery } from './utils/introspection-check';
-import { type OperationDefinitionNode, parse } from 'graphql'; // Import the utility function
+import { shouldBypassAuth } from './utils/should-bypass-auth';
+
+
+const loggerCtx = 'index'
 
 async function startServer() {
   await connectToDatabase();
@@ -37,51 +39,30 @@ async function startServer() {
 
   // Middleware to conditionally authenticate user and set user context
   app.use('/graphql', (req: Request, res: Response, next: NextFunction) => {
+    const reqInfo = {
+      url: req.url,
+      method: req.method,
+      ip: req.ip,
+      headers: req.headers,
+      operation: {}
+    };
+
     if (req.body && req.body.query) {
       if (isIntrospectionQuery(req.body.query)) {
-        logger.info('Bypassing authentication for introspection query');
+        logger.info('Bypassing authentication for introspection query', loggerCtx);
         return next(); // Bypass authentication for introspection queries
       }
 
+      if (shouldBypassAuth(req.body.query)) {
+        logger.info(`Bypassing authentication for due to excluded operation: ${req.body.query}`, loggerCtx);
+        return next(); // Bypass authentication for this request
+      }
+
       try {
-        const parsedQuery = parse(req.body.query);
-        const operationDefinitions = parsedQuery.definitions.filter(
-          def => def.kind === 'OperationDefinition'
-        ) as OperationDefinitionNode[];
-
-        operationDefinitions.forEach(def => {
-          const operationType = def.operation;
-          const firstSelection = def.selectionSet.selections[0];
-          if (firstSelection.kind === 'Field') {
-            const operationName = (firstSelection as any).name.value;
-
-            console.log(`Detected operation: Type=${operationType}, Name=${operationName}`); // Detailed logging for each operation
-
-            // Define the operations that should bypass authentication
-            const bypassAuthOperations = [
-              { type: 'mutation', name: 'register' },
-              // Add more operations as needed
-            ];
-
-            const shouldBypassAuth = bypassAuthOperations.some(
-              op => op.type === operationType && op.name === operationName
-            );
-
-            if (shouldBypassAuth) {
-              logger.info('Bypassing authentication for operation:', {
-                query: req.body.query,
-                variables: req.body.variables,
-              });
-              return next(); // Bypass authentication for this request
-            }
-          }
-        });
-
         // If no operation bypasses authentication, apply authentication middleware
         authenticate(req, res, next);
       } catch (error) {
         logger.error('Error parsing GraphQL query:', { error, query: req.body.query });
-        // Optionally, you can continue to authentication or handle the error differently
         authenticate(req, res, next);
       }
     } else {

@@ -26,10 +26,10 @@ export class AuthResolver {
 
   @Mutation(() => String)
   async login(
-    @Arg('username') username: string,
+    @Arg('email') email: string,
     @Arg('password') password: string
   ): Promise<string> {
-    const user = await UserModel.findOne({ username });
+    const user = await UserModel.findOne({ email });
     if (!user) {
       throw new Error('Invalid credentials');
     }
