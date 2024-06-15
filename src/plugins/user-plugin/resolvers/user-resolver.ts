@@ -1,21 +1,31 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql';
-import { Inject, Service } from 'typedi';
-import { User } from '../entities/user';
-import { UserService } from '../services/user-service';
+import { Resolver, Query, Ctx, Arg, Mutation } from 'type-graphql';
+import { User, UserModel } from '../entities/user';
 
-@Service()
 @Resolver()
 export class UserResolver {
-  @Inject(() => UserService)
-  private readonly userService!: UserService;
-
   @Query(() => [User])
-  async users() {
-    return this.userService.getAllUsers();
+  async users(@Ctx() context: any): Promise<User[]> {
+    const enforcer = context.enforcer;
+    const hasAccess = await enforcer.enforce(context.user.role, 'user', 'read');
+    if (!hasAccess) {
+      throw new Error('Not authorized');
+    }
+    return UserModel.find().exec();
   }
 
   @Mutation(() => User)
-  async createUser(@Arg('name') name: string, @Arg('email') email: string) {
-    return this.userService.createUser(name, email);
+  async createUser(
+    @Arg('name') name: string,
+    @Arg('email') email: string,
+    @Ctx() context: any
+  ): Promise<User> {
+    const enforcer = context.enforcer;
+    const hasAccess = await enforcer.enforce(context.user.role, 'user', 'write');
+    if (!hasAccess) {
+      throw new Error('Not authorized');
+    }
+    const user = new UserModel({ name, email });
+    await user.save();
+    return user;
   }
 }
