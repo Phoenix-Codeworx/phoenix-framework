@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'bun:test';
-import { UserService } from './user-service';
+import { UserService } from './user-service.ts';
 import { User, UserModel } from '../entities/user';
 import { instance, mock, when, anything } from 'ts-mockito';
 import mongoose, { Document } from 'mongoose';
-import { connectDB, closeDB } from '../../../../test/test-db-setup';
+import { connectDB, closeDB } from '../../../../test/test-db-setup.ts';
 
 interface UserDocument extends Document {
   name: string;

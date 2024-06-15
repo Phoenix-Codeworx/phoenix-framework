@@ -3,7 +3,7 @@ import { GraphQLSchema } from 'graphql';
 import { buildSchema, type NonEmptyArray } from 'type-graphql';
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
-import logger from '../config/logger.ts';
+import logger from '../config/logger';
 
 export class PluginLoader {
   private plugins: any[] = [];

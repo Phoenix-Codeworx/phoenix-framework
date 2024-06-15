@@ -2,12 +2,14 @@ import 'reflect-metadata';
 import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { connectToDatabase } from './config/database';
-import { PluginLoader } from './plugins/plugin-loader';
 import env from './config/config';
 import logger from './config/logger';
 import { initEnforcer, getEnforcer } from './rbac';
 import { authenticate } from './middleware/auth';
-import { parse, type OperationDefinitionNode, type FieldNode } from 'graphql';
+import { PluginLoader } from './plugins/plugin-loader';
+import { Container } from 'typedi';
+import { isIntrospectionQuery } from './utils/introspection-check';
+import { type OperationDefinitionNode, parse } from 'graphql'; // Import the utility function
 
 async function startServer() {
   await connectToDatabase();
@@ -20,7 +22,8 @@ async function startServer() {
 
   const server = new ApolloServer({
     schema,
-    context: ({ req }: { req: Request }) => ({
+    introspection: true, // Ensure introspection is enabled
+    context: ({ req }) => ({
       user: req.user, // User object from middleware
       enforcer: getEnforcer(), // Casbin enforcer instance
     }),
@@ -35,6 +38,11 @@ async function startServer() {
   // Middleware to conditionally authenticate user and set user context
   app.use('/graphql', (req: Request, res: Response, next: NextFunction) => {
     if (req.body && req.body.query) {
+      if (isIntrospectionQuery(req.body.query)) {
+        logger.info('Bypassing authentication for introspection query');
+        return next(); // Bypass authentication for introspection queries
+      }
+
       try {
         const parsedQuery = parse(req.body.query);
         const operationDefinitions = parsedQuery.definitions.filter(
@@ -45,14 +53,14 @@ async function startServer() {
           const operationType = def.operation;
           const firstSelection = def.selectionSet.selections[0];
           if (firstSelection.kind === 'Field') {
-            const operationName = (firstSelection as FieldNode).name.value;
+            const operationName = (firstSelection as any).name.value;
 
-            logger.info(`operation: Type=${operationType}, Name=${operationName}`); // Detailed logging for each operation
+            console.log(`Detected operation: Type=${operationType}, Name=${operationName}`); // Detailed logging for each operation
 
             // Define the operations that should bypass authentication
             const bypassAuthOperations = [
               { type: 'mutation', name: 'register' },
-              { type: 'mutation', name: 'login' },
+              // Add more operations as needed
             ];
 
             const shouldBypassAuth = bypassAuthOperations.some(

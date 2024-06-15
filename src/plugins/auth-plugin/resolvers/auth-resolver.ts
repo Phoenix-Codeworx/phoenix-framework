@@ -1,6 +1,6 @@
-import { Resolver, Mutation, Arg } from 'type-graphql';
+import { Resolver, Mutation, Arg, Query, Ctx } from 'type-graphql';
 import bcrypt from 'bcrypt';
-import { UserModel } from '../../user-plugin/entities/user';
+import { UserModel } from '../entities/user';
 import logger from '../../../config/logger';
 import { User } from '../entities/user'; // Ensure this path is correct
 import { Service } from 'typedi';
@@ -13,13 +13,13 @@ const loggerCtx = 'auth-resolver';
 export class AuthResolver {
   @Mutation(() => User)
   async register(
-    @Arg('email') username: string,
+    @Arg('email') email: string,
     @Arg('password') password: string,
     @Arg('name') name: string
   ): Promise<User> {
-    logger.info(`Registering user: ${name}`, loggerCtx);
+    logger.info(`Registering user: ${name}/${email}`, loggerCtx);
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new UserModel({ username, password: hashedPassword, name, role: 'user' });
+    const user = new UserModel({ email, password: hashedPassword, name, role: 'user' });
     await user.save();
     return user;
   }
@@ -41,5 +41,15 @@ export class AuthResolver {
 
     const token = jwt.sign({ role: user.role, id: user._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
     return token;
+  }
+
+  @Query(() => [User])
+  async users(@Ctx() context: any): Promise<User[]> {
+    const enforcer = context.enforcer;
+    const hasAccess = await enforcer.enforce(context.user.role, 'user', 'read');
+    if (!hasAccess) {
+      throw new Error('Not authorized');
+    }
+    return UserModel.find().exec();
   }
 }
