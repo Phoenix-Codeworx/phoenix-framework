@@ -27,5 +27,6 @@
     // Required for decorators and metadata
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
-  }
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts", "types/**/*.d.ts"]
 }
