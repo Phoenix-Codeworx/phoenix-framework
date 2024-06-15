@@ -29,7 +29,7 @@ describe('UserService', () => {
     userModelMock = mock<typeof UserModel>();
   });
 
-  it.skip('should return all users using UserService', async () => {
+  it('should return all users using UserService', async () => {
     const mockUsers: User[] = [
       { name: 'John Doe', email: 'john@example.com', password: 'password1', role: 'user' },
       { name: 'Jane Doe', email: 'jane@example.com', password: 'password2', role: 'user' },

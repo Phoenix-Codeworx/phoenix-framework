@@ -2,7 +2,8 @@ import { Resolver, Mutation, Arg, Query, Ctx } from 'type-graphql';
 import bcrypt from 'bcrypt';
 import { UserModel } from '../entities/user';
 import logger from '../../../config/logger';
-import { User } from '../entities/user'; // Ensure this path is correct
+import { User } from '../entities/user';
+import { UserService } from '../services/user-service.ts';
 import { Service } from 'typedi';
 import jwt from 'jsonwebtoken';
 import { getEnforcer } from '../../../rbac';
@@ -12,6 +13,13 @@ const loggerCtx = 'auth-resolver';
 @Service() // Register AuthResolver with Typedi
 @Resolver()
 export class AuthResolver {
+  private userService: UserService;
+
+  constructor() {
+    this.userService = new UserService();
+  }
+
+
   @Mutation(() => User)
   async register(
     @Arg('email') email: string,
@@ -19,15 +27,7 @@ export class AuthResolver {
     @Arg('name') name: string,
     @Arg('role', { defaultValue: 'user' }) role: string, // Default role to 'user'
   ): Promise<User> {
-    logger.info(`Registering user: ${name}/${email}`, loggerCtx);
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new UserModel({ email, password: hashedPassword, name, role });
-    await user.save();
-
-    // Add user-role mapping to Casbin
-    const enforcer = await getEnforcer();
-    await enforcer.addRoleForUser(user._id.toString(), role);
-
+    const user = this.userService.registerUser(name, email, password);
     return user;
   }
 
