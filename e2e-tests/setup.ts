@@ -1,4 +1,3 @@
-// e2e-tests/setup.ts
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import express from 'express';

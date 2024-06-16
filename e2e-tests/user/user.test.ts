@@ -1,10 +1,9 @@
-// e2e-tests/user.test.ts
 import { describe, it, beforeEach, afterEach } from 'bun:test';
 import { expect } from 'chai';
-import { setup } from './setup';
-import { teardown } from './teardown';
-import { initDB, clearDB } from './utils';
-import { login } from './login';
+import { setup } from '../setup';
+import { teardown } from '../teardown';
+import { initDB, clearDB } from '../utils';
+import { login } from '../login';
 import request from 'supertest';
 
 let app: any;

@@ -1,4 +1,3 @@
-// e2e-tests/login.ts
 import request from 'supertest';
 
 export const login = async (app: any) => {
