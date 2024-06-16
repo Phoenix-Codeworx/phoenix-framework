@@ -1,14 +1,15 @@
 import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 import { Inject, Service } from 'typedi';
-import { Sample } from '../entities/sample';
+import { Sample } from '../models/sample';
 import { SampleService } from '../services/sample-service';
 import FunctionRegistry from '../../function-registry';
 
 @Service()
 @Resolver()
 export class SampleResolver {
-  @Inject(() => SampleService)
-  private readonly sampleService!: SampleService;
+  constructor(
+    @Inject(() => SampleService) private readonly sampleService: SampleService
+  ) {}
 
   @Query(() => [Sample])
   async samples() {
@@ -23,7 +24,6 @@ export class SampleResolver {
     const functionRegistry = FunctionRegistry.getInstance();
     const userFunctions = functionRegistry.getFunctionsOfType('user');
     userFunctions.forEach((fn) => fn());
-
     return sample;
   }
 }
