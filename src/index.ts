@@ -59,12 +59,12 @@ async function startServer() {
 
       if (req.body && req.body.query) {
         if (isIntrospectionQuery(req.body.query)) {
-          logger.info('Bypassing authentication for introspection query', loggerCtx);
+          logger.verbose('Bypassing authentication for introspection query', loggerCtx);
           return next(); // Bypass authentication for introspection queries
         }
 
         if (shouldBypassAuth(req.body.query)) {
-          logger.info(`Bypassing authentication due to excluded operation: ${req.body.query}`, loggerCtx);
+          logger.verbose(`Bypassing authentication due to excluded operation`, loggerCtx);
           return next(); // Bypass authentication for this request
         }
 
