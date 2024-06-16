@@ -1,8 +1,8 @@
-import { Field, Float, Int, ObjectType } from 'type-graphql';
-import { prop, getModelForClass } from '@typegoose/typegoose';
+import { InputType, Field, Int, Float } from 'type-graphql';
+import { prop } from '@typegoose/typegoose';
 
-@ObjectType()
-export class Item {
+@InputType()
+export class ItemInput {
   @Field()
   @prop({ required: true })
   public name!: string;
@@ -22,13 +22,5 @@ export class Item {
   @Field(() => Float)
   @prop({ required: true })
   public price!: number;
-}
 
-@ObjectType()
-export class Cart {
-  @Field(() => [Item])
-  @prop({ type: () => [Item], default: [] })
-  public items: Item[] | undefined;
 }
-
-export const CartModel = getModelForClass(Cart);

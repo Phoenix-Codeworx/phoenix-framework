@@ -13,8 +13,6 @@ export default {
       logger.info('Extended Cart model with discount');
     });
 
-    console.log('Resolvers before wrapping:', context.resolvers['Cart']);
-
     context.wrapResolver(
       'Cart',
       'addItemToCart',

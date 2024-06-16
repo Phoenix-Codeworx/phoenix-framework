@@ -5,8 +5,11 @@ import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 import logger from '../config/logger';
 import mongoose, { Schema } from 'mongoose';
-import { type GlobalContext, type ResolverMap } from './global-context';
+import { type GlobalContext } from './global-context';
 import { type Plugin } from './plugin-interface';
+import pluginsList from './plugins-list';
+
+const loggerCtx = 'plugin-loader';
 
 class PluginLoader {
   private plugins: Plugin[] = [];
@@ -30,7 +33,7 @@ class PluginLoader {
       if (!resolverArray) {
         throw new Error(`Resolvers for type ${typeName} do not exist`);
       }
-      console.log(`Resolving ${resolverName} in type ${typeName}`); // Add logging
+      logger.debug(`Resolving ${resolverName} in type ${typeName}`, loggerCtx);
       const originalResolverIndex = resolverArray.findIndex((resolver: any) => resolver.prototype[resolverName]);
       if (originalResolverIndex === -1) {
         throw new Error(`Resolver ${resolverName} for type ${typeName} does not exist`);
@@ -44,8 +47,7 @@ class PluginLoader {
     const pluginsDir = join(__dirname, '.');
 
     // Explicitly load cart-plugin and discount-plugin first
-    const specificPlugins = ['cart-plugin', 'discount-plugin'];
-    specificPlugins.forEach((pluginName) => {
+    pluginsList.forEach((pluginName) => {
       const pluginPath = join(pluginsDir, pluginName);
       if (statSync(pluginPath).isDirectory()) {
         try {
@@ -53,11 +55,11 @@ class PluginLoader {
           if (!plugin) {
             throw new Error(`Plugin in directory ${pluginName} does not have a default export`);
           }
-          logger.info(`Loaded plugin: ${plugin.name} of type ${plugin.type}`);
+          logger.info(`Loaded plugin: ${plugin.name} of type ${plugin.type}`, loggerCtx);
           this.plugins.push(plugin);
           if (plugin.register) {
             plugin.register(Container, this.context);
-            logger.info(`Registered plugin: ${plugin.name}`);
+            logger.debug(`Registered plugin: ${plugin.name}`, loggerCtx);
           }
         } catch (error) {
           console.error(`Failed to load plugin from directory ${pluginName}:`, error);
@@ -77,14 +79,14 @@ class PluginLoader {
         if (!plugin) {
           throw new Error(`Plugin in directory ${dir} does not have a default export`);
         }
-        logger.info(`Loaded plugin: ${plugin.name} of type ${plugin.type}`);
+        logger.info(`Loaded plugin: ${plugin.name} of type ${plugin.type}`, loggerCtx);
         this.plugins.push(plugin);
         if (plugin.register) {
           plugin.register(Container, this.context);
-          logger.info(`Registered plugin: ${plugin.name}`);
+          logger.info(`Registered plugin: ${plugin.name}`, loggerCtx);
         }
       } catch (error) {
-        console.error(`Failed to load plugin from directory ${dir}:`, error);
+        logger.error(`Failed to load plugin from directory ${dir}:`, error);
       }
     });
   }
@@ -94,10 +96,10 @@ class PluginLoader {
       try {
         if (plugin.initialize) {
           plugin.initialize(this.context);
-          logger.info(`Initialized plugin: ${plugin.name}`);
+          logger.info(`Initialized plugin: ${plugin.name}`, loggerCtx);
         }
       } catch (error) {
-        console.error(`Failed to initialize plugin ${plugin.name}:`, error);
+        logger.error(`Failed to initialize plugin ${plugin.name}: ${error}`, loggerCtx);
       }
     });
   }
@@ -108,7 +110,6 @@ class PluginLoader {
       throw new Error('No resolvers found. Please ensure at least one resolver is provided.');
     }
 
-    console.log('Flat Resolvers:', allResolvers); // Add logging
 
     try {
       return await buildSchema({
@@ -116,7 +117,7 @@ class PluginLoader {
         container: Container,
       });
     } catch (error) {
-      console.error('Error building schema:', error);
+      logger.error(`Error building schema: ${error}`, loggerCtx);
       throw error;
     }
   }
