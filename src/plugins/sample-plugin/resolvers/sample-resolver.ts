@@ -7,9 +7,7 @@ import FunctionRegistry from '../../function-registry';
 @Service()
 @Resolver()
 export class SampleResolver {
-  constructor(
-    @Inject(() => SampleService) private readonly sampleService: SampleService
-  ) {}
+  constructor(@Inject(() => SampleService) private readonly sampleService: SampleService) {}
 
   @Query(() => [Sample])
   async samples() {

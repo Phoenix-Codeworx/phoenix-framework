@@ -34,7 +34,7 @@ class KafkaEventService {
         if (message.value) {
           const handlers = this.eventHandlers[topic] || [];
           const parsedMessage = JSON.parse(message.value.toString());
-          handlers.forEach(handler => handler(parsedMessage));
+          handlers.forEach((handler) => handler(parsedMessage));
         }
       },
     });
@@ -52,7 +52,7 @@ class KafkaEventService {
           console.error(`Connection attempt ${i + 1} failed: ${err}`);
         }
         if (i === retries - 1) throw err;
-        await new Promise(res => setTimeout(res, 2000)); // Wait for 2 seconds before retrying
+        await new Promise((res) => setTimeout(res, 2000)); // Wait for 2 seconds before retrying
       }
     }
   }
