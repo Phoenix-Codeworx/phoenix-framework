@@ -3,15 +3,48 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Cart {
+  items: [Item!]!
+}
+
+type Item {
+  description: String!
+  name: String!
+  price: Float!
+  productId: String!
+  quantity: Int!
+}
+
+input ItemInput {
+  description: String!
+  name: String!
+  price: Float!
+  productId: String!
+  quantity: Int!
+}
+
 type Mutation {
-  createUser(email: String!, name: String!): User!
+  addItemToCart(cartId: String!, item: ItemInput!): Cart!
+  addRole(permissions: [String!]!, role: String!): Boolean!
+  assignRole(role: String!, userId: String!): Boolean!
+  createSample(name: String!): Sample!
+  login(email: String!, password: String!): String!
+  register(email: String!, name: String!, password: String!, role: String! = "user"): User!
 }
 
 type Query {
+  getCarts: [Cart!]!
+  samples: [Sample!]!
   users: [User!]!
+}
+
+type Sample {
+  name: String!
 }
 
 type User {
   email: String!
   name: String!
+  password: String!
+  role: String!
 }
