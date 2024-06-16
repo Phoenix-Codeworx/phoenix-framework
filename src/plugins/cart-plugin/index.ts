@@ -1,5 +1,5 @@
 import { Container } from 'typedi';
-import { getModelForClass, prop } from '@typegoose/typegoose';
+import { getModelForClass } from '@typegoose/typegoose';
 import { type GlobalContext } from '../global-context';
 import { Cart } from './models/cart';
 import { CartResolver } from './resolvers/cart-resolver';

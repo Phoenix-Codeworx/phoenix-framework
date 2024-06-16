@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
 import { GraphQLSchema } from 'graphql';
 import { buildSchema, type NonEmptyArray } from 'type-graphql';
-import { readdirSync, statSync } from 'fs';
+import { statSync } from 'fs';
 import { join } from 'path';
 import logger from '../config/logger';
 import mongoose, { Schema } from 'mongoose';
