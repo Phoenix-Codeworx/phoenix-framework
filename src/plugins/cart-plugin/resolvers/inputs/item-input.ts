@@ -22,5 +22,4 @@ export class ItemInput {
   @Field(() => Float)
   @prop({ required: true })
   public price!: number;
-
 }

@@ -1,16 +1,14 @@
 import { Schema } from 'mongoose';
 import { type GlobalContext } from '../global-context';
-import logger from '../../config/logger';
 
 export default {
   name: 'discount-plugin',
-  type: 'ecommerce',
+  type: 'cart',
   initialize(context: GlobalContext) {
     context.extendModel('Cart', (schema: Schema) => {
       schema.add({
         discount: { type: Number, required: false },
       });
-      logger.info('Extended Cart model with discount');
     });
 
     context.wrapResolver(
@@ -25,7 +23,6 @@ export default {
         return result;
       },
     );
-    logger.info('Wrapped addItemToCart resolver');
   },
 };
 

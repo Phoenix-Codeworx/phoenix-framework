@@ -12,7 +12,7 @@ import { shouldBypassAuth } from './utils/should-bypass-auth';
 import { bootstrap } from './plugins/auth-plugin/bootstrap';
 import sanitizeLog from './sanitize-log';
 
-const loggerCtx = 'index';
+const loggerCtx = { context: 'index' };
 
 async function startServer() {
   try {
@@ -88,10 +88,10 @@ async function startServer() {
 
     const port = env.PORT;
     app.listen(port, () => {
-      logger.info(`Server is running at http://localhost:${port}${server.graphqlPath}`, { context: 'server' });
+      logger.info(`Server is running at http://localhost:${port}${server.graphqlPath}`, { context: 'index' });
     });
   } catch (error) {
-    logger.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error, loggerCtx);
   }
 }
 

@@ -9,11 +9,11 @@ import { type GlobalContext } from './global-context';
 import { type Plugin } from './plugin-interface';
 import pluginsList from './plugins-list';
 
-const loggerCtx = 'plugin-loader';
+const loggerCtx = { context: 'plugin-loader' };
 
 class PluginLoader {
   private plugins: Plugin[] = [];
-  private context: GlobalContext = {
+  context: GlobalContext = {
     models: {},
     resolvers: {},
     extendModel: (name: string, extension: (schema: Schema) => void) => {
@@ -45,8 +45,6 @@ class PluginLoader {
 
   loadPlugins() {
     const pluginsDir = join(__dirname, '.');
-
-    // Explicitly load cart-plugin and discount-plugin first
     pluginsList.forEach((pluginName) => {
       const pluginPath = join(pluginsDir, pluginName);
       if (statSync(pluginPath).isDirectory()) {
@@ -64,29 +62,6 @@ class PluginLoader {
         } catch (error) {
           console.error(`Failed to load plugin from directory ${pluginName}:`, error);
         }
-      }
-    });
-
-    // Load other plugins in default order
-    const otherPluginDirs = readdirSync(pluginsDir).filter((file) => {
-      const stat = statSync(join(pluginsDir, file));
-      return stat.isDirectory() && !specificPlugins.includes(file);
-    });
-
-    otherPluginDirs.forEach((dir) => {
-      try {
-        const plugin: Plugin = require(`./${dir}`).default;
-        if (!plugin) {
-          throw new Error(`Plugin in directory ${dir} does not have a default export`);
-        }
-        logger.info(`Loaded plugin: ${plugin.name} of type ${plugin.type}`, loggerCtx);
-        this.plugins.push(plugin);
-        if (plugin.register) {
-          plugin.register(Container, this.context);
-          logger.info(`Registered plugin: ${plugin.name}`, loggerCtx);
-        }
-      } catch (error) {
-        logger.error(`Failed to load plugin from directory ${dir}:`, error);
       }
     });
   }
@@ -109,7 +84,6 @@ class PluginLoader {
     if (allResolvers.length === 0) {
       throw new Error('No resolvers found. Please ensure at least one resolver is provided.');
     }
-
 
     try {
       return await buildSchema({
