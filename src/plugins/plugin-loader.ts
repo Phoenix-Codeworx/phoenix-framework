@@ -2,7 +2,7 @@ import { Container } from 'typedi';
 import { GraphQLSchema } from 'graphql';
 import { buildSchema, type NonEmptyArray } from 'type-graphql';
 import { statSync } from 'fs';
-import { join } from 'path';
+import path, { join } from 'path';
 import logger from '../config/logger';
 import mongoose, { Schema } from 'mongoose';
 import { type GlobalContext } from './global-context';
@@ -101,6 +101,7 @@ class PluginLoader {
       return await buildSchema({
         resolvers: allResolvers as unknown as NonEmptyArray<Function>,
         container: Container,
+        emitSchemaFile: path.resolve(__dirname, '../../schema.graphql'),
       });
     } catch (error) {
       logger.error(`Error building schema: ${error}`, loggerCtx);
