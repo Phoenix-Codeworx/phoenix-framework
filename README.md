@@ -13,6 +13,7 @@ An ultra-fast, easy-to-use framework that has "ready for the big time" features
 ## Features included right now
 * Plugin architecture that allows you to create and extend models and resolvers via plugins
 * Role-Based auth
+* Integration and e2e tests
 
 ## Features under construction
 Check the GH issues for things I plan to add in the near future
@@ -39,5 +40,11 @@ To run unit and integration tests: (not many beyond a poc for now)
 
 ```bash
 bun test
+```
+
+To run e2e tests
+
+```bash
+bun run test:e2e
 ```
 
