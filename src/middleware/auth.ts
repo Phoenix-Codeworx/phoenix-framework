@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import logger from '../config/logger.ts';
 
-const loggerCtx = 'auth-middleware';
+const loggerCtx = { context: 'auth-middleware' };
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -13,7 +13,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 
   const token = authHeader.split(' ')[1];
   if (!token) {
-    logger.error('Token missing');
+    logger.error('Token missing', loggerCtx);
     return res.status(401).send('Token missing');
   }
 
@@ -27,7 +27,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     req.user = decoded; // Attach the user to the request object
     next();
   } catch (err) {
-    console.log('Invalid token:', err);
+    logger.error('Invalid token:', err, loggerCtx);
     return res.status(401).send('Invalid token');
   }
 };

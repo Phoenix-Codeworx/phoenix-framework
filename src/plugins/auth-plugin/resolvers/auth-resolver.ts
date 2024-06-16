@@ -1,14 +1,11 @@
 import { Resolver, Mutation, Arg, Query, Ctx } from 'type-graphql';
 import bcrypt from 'bcrypt';
-import { UserModel } from '../entities/user';
-import logger from '../../../config/logger';
-import { User } from '../entities/user';
+import { UserModel } from '../models/user';
+import { User } from '../models/user';
 import { UserService } from '../services/user-service.ts';
 import { Service } from 'typedi';
 import jwt from 'jsonwebtoken';
 import { getEnforcer } from '../../../rbac';
-
-const loggerCtx = 'auth-resolver';
 
 @Service() // Register AuthResolver with Typedi
 @Resolver()
@@ -18,7 +15,6 @@ export class AuthResolver {
   constructor() {
     this.userService = new UserService();
   }
-
 
   @Mutation(() => User)
   async register(

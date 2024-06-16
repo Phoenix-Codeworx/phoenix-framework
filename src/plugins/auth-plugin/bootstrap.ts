@@ -1,13 +1,16 @@
 import bcrypt from 'bcrypt';
-import { UserModel } from './entities/user';
+import { UserModel } from './models/user';
 import { getEnforcer } from '../../rbac';
 import logger from '../../config/logger';
+
+const loggerCtx = { context: 'auth-plugin-bootstrap' };
+const email = 'superuser@example.com';
 
 export const bootstrap = async () => {
   const userCount = await UserModel.countDocuments({});
   if (userCount === 0) {
     const superuser = new UserModel({
-      email: 'superuser@example.com',
+      email: email,
       password: await bcrypt.hash('superpassword', 10), // Use a secure password
       name: 'Super User',
       role: 'superadmin',
@@ -33,8 +36,8 @@ export const bootstrap = async () => {
       }
     }
 
-    logger.info('Superuser created with email: superuser@phoenix.com');
+    logger.info(`Superuser created with email: ${email}`);
   } else {
-    logger.info('Users already exist. No superuser created.');
+    logger.info('Users already exist. No superuser created.', loggerCtx);
   }
 };
