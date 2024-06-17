@@ -18,7 +18,7 @@ An ultra-fast, easy-to-use framework that has "ready for the big time" features
 * Job-queue system backed by BullMq
 
 ## Features under construction
-Check the GH issues for things I plan to add in the near future
+Check the [GH issues](https://github.com/Phoenix-Codeworx/phoenix-framework/issues) for things I plan to add in the near future
 
 To install dependencies:
 
