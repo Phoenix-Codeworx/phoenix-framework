@@ -8,12 +8,15 @@ import mongoose, { Schema } from 'mongoose';
 import { type GlobalContext } from './global-context';
 import { type Plugin } from './plugin-interface';
 import pluginsList from './plugins-list';
+import { Queue, Worker, QueueEvents, type WorkerOptions } from 'bullmq';
+import env from '../config/config';
 
 const loggerCtx = { context: 'plugin-loader' };
 
 class PluginLoader {
   private plugins: Plugin[] = [];
   context: GlobalContext = this.createInitialContext();
+  private queues: Record<string, Queue> = {};
 
   private createInitialContext(): GlobalContext {
     return {
@@ -22,6 +25,7 @@ class PluginLoader {
       extendModel: this.extendModel.bind(this),
       extendResolvers: this.extendResolvers.bind(this),
       wrapResolver: this.wrapResolver.bind(this),
+      queues: {}
     };
   }
 
@@ -113,6 +117,36 @@ class PluginLoader {
     Object.keys(this.context.models).forEach((modelName) => {
       mongoose.model(modelName, this.context.models[modelName].schema);
     });
+  }
+
+  initializeQueues(): void {
+    Object.keys(this.context.queues).forEach((queueName) => {
+      const { processor, options } = this.context.queues[queueName];
+      const queue = new Queue(queueName, options);
+      const worker = new Worker(queueName, processor, options);
+      const queueEvents = new QueueEvents(queueName, options);
+
+      queueEvents.on('completed', (job) => {
+        logger.info(`Job ${job.jobId} in queue ${queueName} completed!`, loggerCtx);
+      });
+
+      queueEvents.on('failed', (job, err) => {
+        const errorMessage = this.extractErrorMessage(err);
+        logger.error(`Job ${job.jobId} in queue ${queueName} failed with error: ${errorMessage}`, loggerCtx);;
+      });
+
+      this.queues[queueName] = queue;
+    });
+  }
+
+  private extractErrorMessage(err: unknown): string {
+    if (typeof err === 'string') {
+      return err;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return JSON.stringify(err);
   }
 }
 

@@ -1,11 +1,14 @@
-// src/services/sample-service.ts
 import { Service } from 'typedi';
 import { Sample, SampleModel } from '../models/sample';
 import KafkaEventService from '../../../event/kafka-event-service';
+import { Queue } from 'bullmq';
 
 @Service()
 export class SampleService {
-  constructor(private eventService: KafkaEventService) {}
+  constructor(
+    private eventService: KafkaEventService,
+    private sampleQueue: Queue
+  ) {}
 
   async getAllSamples(): Promise<Sample[]> {
     return SampleModel.find().exec();
@@ -15,6 +18,14 @@ export class SampleService {
     const sample = new SampleModel({ name });
     const savedSample = await sample.save();
     await this.eventService.emitEvent('sampleCreated', savedSample); // Emit event using the centralized service
+
+    // Add job to the sampleQueue
+    await this.sampleQueue.add('processSample', { sampleId: savedSample.id });
+
     return savedSample;
+  }
+
+  async getSampleById(id: string): Promise<Sample | null> {
+    return SampleModel.findById(id).exec();
   }
 }

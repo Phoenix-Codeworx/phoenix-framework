@@ -11,6 +11,7 @@ import { isIntrospectionQuery } from './utils/introspection-check';
 import { shouldBypassAuth } from './utils/should-bypass-auth';
 import { bootstrap } from './plugins/auth-plugin/bootstrap';
 import sanitizeLog from './sanitize-log';
+import { startWorker } from './worker';
 
 const loggerCtx = { context: 'index' };
 
@@ -95,4 +96,21 @@ async function startServer() {
   }
 }
 
-startServer();
+async function startApp() {
+  switch (env.MODE) {
+    case 'server':
+      await startServer();
+      break;
+    case 'worker':
+      await startWorker();
+      break;
+    case 'dev':
+      await startServer();
+      await startWorker();
+      break;
+    default:
+      logger.error('Unknown mode specified. Please set MODE to "server", "worker", or "dev".', loggerCtx);
+  }
+}
+
+startApp();

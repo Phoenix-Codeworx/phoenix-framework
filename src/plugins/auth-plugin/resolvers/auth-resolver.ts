@@ -6,6 +6,7 @@ import { UserService } from '../services/user-service.ts';
 import { Service } from 'typedi';
 import jwt from 'jsonwebtoken';
 import { getEnforcer } from '../../../rbac';
+import env from '../../../config/config.ts';
 
 @Service() // Register AuthResolver with Typedi
 @Resolver()
@@ -39,7 +40,7 @@ export class AuthResolver {
       throw new Error('Invalid credentials');
     }
 
-    const token = jwt.sign({ role: user.role, id: user._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+    const token = jwt.sign({ role: user.role, id: user._id }, process.env.JWT_SECRET!, { expiresIn: env.JTW_EXPIRY });
     return token;
   }
 
