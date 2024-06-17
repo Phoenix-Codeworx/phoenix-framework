@@ -2,6 +2,7 @@ import { Service } from 'typedi';
 import { Sample, SampleModel } from '../models/sample';
 import KafkaEventService from '../../../event/kafka-event-service';
 import { Queue } from 'bullmq';
+import logger from '../../../config/logger.ts';
 
 @Service()
 export class SampleService {
@@ -17,6 +18,7 @@ export class SampleService {
   async createSample(name: string): Promise<Sample> {
     const sample = new SampleModel({ name });
     const savedSample = await sample.save();
+    logger.debug('emitting sampleCreated event:', savedSample);
     await this.eventService.emitEvent('sampleCreated', savedSample); // Emit event using the centralized service
 
     // Add job to the sampleQueue

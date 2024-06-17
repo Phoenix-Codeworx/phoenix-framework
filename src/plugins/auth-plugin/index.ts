@@ -2,6 +2,9 @@ import { AuthResolver } from './resolvers/auth-resolver';
 import type { Plugin } from '../plugin-interface';
 import FunctionRegistry from '../function-registry';
 import { type GlobalContext } from '../global-context';
+import logger from '../../config/logger.ts';
+
+const loggerCtx = { context: 'auth-plugin/register' };
 
 const authPlugin: Plugin = {
   name: 'auth-plugin',
@@ -13,7 +16,7 @@ const authPlugin: Plugin = {
 
     // Perform any additional registration if necessary
     const functionRegistry = FunctionRegistry.getInstance();
-    functionRegistry.registerFunction('user', () => console.log('User function called'));
+    functionRegistry.registerFunction('user', () => logger.debug('User function called', loggerCtx));
   },
 };
 

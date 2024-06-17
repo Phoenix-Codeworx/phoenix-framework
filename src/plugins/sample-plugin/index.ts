@@ -6,9 +6,12 @@ import { SampleResolver } from './resolvers/sample-resolver';
 import { SampleService } from './services/sample-service';
 import KafkaEventService from '../../event/kafka-event-service';
 import { Queue, Job } from 'bullmq';
+import logger from '../../config/logger.ts';
+
+const loggerCtx = { context: 'sample-plugin/index' };
 
 const sampleJobProcessor = async (job: Job) => {
-  console.log(`Processing job ${job.id}`);
+  logger.info(`Processing job ${job.id}`, loggerCtx);
   // Add job processing logic here
 };
 
@@ -44,7 +47,8 @@ export default {
 
     // Set up event handlers using the centralized event service
     eventService.subscribeToEvent('sampleCreated', (sample) => {
-      console.log('Sample created:', sample);
+      logger.debug('Received sampleCreated event:', sample)
+      logger.info(`Sample created: ${sample}`, loggerCtx);
       // Additional handling logic here
     });
 

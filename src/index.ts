@@ -1,35 +1,21 @@
 import 'reflect-metadata';
 import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import { ApolloServer } from 'apollo-server-express';
-import { connectToDatabase } from './config/database';
 import env from './config/config';
 import logger from './config/logger';
-import { initEnforcer, getEnforcer } from './rbac';
 import { authenticate } from './middleware/auth';
-import PluginLoader from './plugins/plugin-loader';
 import { isIntrospectionQuery } from './utils/introspection-check';
 import { shouldBypassAuth } from './utils/should-bypass-auth';
-import { bootstrap } from './plugins/auth-plugin/bootstrap';
 import sanitizeLog from './sanitize-log';
+import { initializeSharedResources } from './shared';
 import { startWorker } from './worker';
+import { getEnforcer } from './rbac.ts';
+import type PluginLoader from './plugins/plugin-loader.ts';
 
 const loggerCtx = { context: 'index' };
 
-async function startServer() {
+async function startServer(pluginLoader: PluginLoader) {
   try {
-    await connectToDatabase();
-    await initEnforcer(); // Initialize Casbin
-    await bootstrap(); // Bootstrap the application with a superuser
-
-    const pluginLoader = new PluginLoader();
-    pluginLoader.loadPlugins();
-
-    // Register models before initializing plugins
-    pluginLoader.registerModels();
-
-    // Initialize plugins (extend models and resolvers)
-    pluginLoader.initializePlugins();
-
     const schema = await pluginLoader.createSchema();
 
     const server = new ApolloServer({
@@ -97,16 +83,18 @@ async function startServer() {
 }
 
 async function startApp() {
+  const pluginLoader = await initializeSharedResources();
+
   switch (env.MODE) {
     case 'server':
-      await startServer();
+      await startServer(pluginLoader);
       break;
     case 'worker':
-      await startWorker();
+      await startWorker(pluginLoader);
       break;
     case 'dev':
-      await startServer();
-      await startWorker();
+      await startServer(pluginLoader);
+      await startWorker(pluginLoader, true); // Pass a flag to indicate dev mode
       break;
     default:
       logger.error('Unknown mode specified. Please set MODE to "server", "worker", or "dev".', loggerCtx);
