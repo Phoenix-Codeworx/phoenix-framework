@@ -40,7 +40,7 @@ export class AuthResolver {
       throw new Error('Invalid credentials');
     }
 
-    const token = jwt.sign({ role: user.role, id: user._id }, process.env.JWT_SECRET!, { expiresIn: env.JTW_EXPIRY });
+    const token = jwt.sign({ role: user.role, id: user._id }, env.JWT_SECRET!, { expiresIn: env.JTW_EXPIRY });
     return token;
   }
 

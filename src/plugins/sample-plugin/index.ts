@@ -7,6 +7,7 @@ import { SampleService } from './services/sample-service';
 import KafkaEventService from '../../event/kafka-event-service';
 import { Queue, Job } from 'bullmq';
 import logger from '../../config/logger.ts';
+import env from '../../config/config.ts';
 
 const loggerCtx = { context: 'sample-plugin/index' };
 
@@ -27,8 +28,8 @@ export default {
     // Define and register the queue for this plugin
     const sampleQueue = new Queue('sampleQueue', {
       connection: {
-        host: process.env.REDIS_HOST || 'localhost',
-        port: Number(process.env.REDIS_PORT) || 6379,
+        host: env.REDIS_HOST || 'localhost',
+        port: Number(env.REDIS_PORT) || 6379,
       },
     });
 
@@ -56,8 +57,8 @@ export default {
       processor: sampleJobProcessor,
       options: {
         connection: {
-          host: process.env.REDIS_HOST || 'localhost',
-          port: Number(process.env.REDIS_PORT) || 6379,
+          host: env.REDIS_HOST || 'localhost',
+          port: Number(env.REDIS_PORT) || 6379,
         },
       },
     };

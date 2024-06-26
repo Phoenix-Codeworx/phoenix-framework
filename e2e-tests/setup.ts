@@ -5,8 +5,9 @@ import { ApolloServer } from 'apollo-server-express';
 import jwt from 'jsonwebtoken';
 import PluginLoader from '../src/plugins/plugin-loader'; // Adjust the path as needed
 import { setMongoServer } from './teardown';
+import env from '../src/config/config';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = env.JWT_SECRET || 'your_jwt_secret';
 
 let server: ApolloServer;
 let app: express.Application;
