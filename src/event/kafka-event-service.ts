@@ -1,5 +1,6 @@
 import { Kafka, type Producer, type Consumer } from 'kafkajs';
 import { Container, Service } from 'typedi';
+import env from '../config/config.ts';
 
 @Service()
 class KafkaEventService {
@@ -12,7 +13,7 @@ class KafkaEventService {
   constructor() {
     this.kafka = new Kafka({
       clientId: 'my-app',
-      brokers: [process.env.KAFKA_BROKER || 'localhost:29092'], // Use environment variable or default to localhost
+      brokers: [env.KAFKA_BROKER || 'localhost:29092'], // Use environment variable or default to localhost
     });
 
     this.producer = this.kafka.producer();
