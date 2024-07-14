@@ -1,5 +1,5 @@
 import { Kafka, type Producer, type Consumer } from 'kafkajs';
-import { Container, Service } from 'typedi';
+import { Service, Container } from 'typedi';
 
 @Service()
 class KafkaEventService {
@@ -81,4 +81,4 @@ class KafkaEventService {
 // Register the service with typedi
 Container.set(KafkaEventService, new KafkaEventService());
 
-export default KafkaEventService;
+export { KafkaEventService };

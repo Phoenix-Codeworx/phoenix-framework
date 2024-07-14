@@ -1,18 +1,18 @@
 import 'reflect-metadata';
 import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import { ApolloServer } from 'apollo-server-express';
-import env from './config/config';
-import logger from './config/logger';
-import { authenticate } from './middleware/auth';
-import { isIntrospectionQuery } from './utils/introspection-check';
-import { shouldBypassAuth } from './utils/should-bypass-auth';
-import sanitizeLog from './sanitize-log';
-import { initializeSharedResources } from './shared';
-import { startWorker } from './worker';
-import { getEnforcer } from './rbac.ts';
-import type PluginLoader from './plugins/plugin-loader.ts';
+import env from './config/config.js';
+import logger from './config/logger.js';
+import { authenticate } from './middleware/auth.js';
+import { isIntrospectionQuery } from './utils/introspection-check.js';
+import { shouldBypassAuth } from './utils/should-bypass-auth.js';
+import sanitizeLog from './sanitize-log.js';
+import { initializeSharedResources } from './shared.js';
+import { startWorker } from './worker.js';
+import { getEnforcer } from './rbac.js';
+import type PluginLoader from './plugins/plugin-loader.js';
 
-const loggerCtx = { context: 'index' };
+const loggerCtx = { context: 'server' };
 
 async function startServer(pluginLoader: PluginLoader) {
   try {
@@ -75,15 +75,15 @@ async function startServer(pluginLoader: PluginLoader) {
 
     const port = env.PORT;
     app.listen(port, () => {
-      logger.info(`Server is running at http://localhost:${port}${server.graphqlPath}`, { context: 'index' });
+      logger.info(`Server is running at http://localhost:${port}${server.graphqlPath}`, { context: 'server' });
     });
   } catch (error) {
     logger.error('Failed to start server:', error, loggerCtx);
   }
 }
 
-async function startApp() {
-  const pluginLoader = await initializeSharedResources();
+async function startApp(pluginDirs: string[]) {
+  const pluginLoader = await initializeSharedResources(pluginDirs);
 
   switch (env.MODE) {
     case 'server':
@@ -101,4 +101,4 @@ async function startApp() {
   }
 }
 
-startApp();
+export { startApp };

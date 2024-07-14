@@ -1,8 +1,8 @@
-import { AuthResolver } from './resolvers/auth-resolver';
-import type { Plugin } from '../plugin-interface';
-import FunctionRegistry from '../function-registry';
-import { type GlobalContext } from '../global-context';
-import logger from '../../config/logger.ts';
+import { AuthResolver } from './resolvers/auth-resolver.js';
+import { type Plugin } from '@phoenix-framework/core/src/plugins/plugin-interface.js';
+import FunctionRegistry from '@phoenix-framework/core/src/plugins/function-registry.js';
+import { type GlobalContext } from '@phoenix-framework/core/src/plugins/global-context.js';
+import logger from '@phoenix-framework/core/src/config/logger.js';
 
 const loggerCtx = { context: 'auth-plugin/register' };
 
@@ -10,7 +10,7 @@ const authPlugin: Plugin = {
   name: 'auth-plugin',
   type: 'authorization',
   resolvers: [AuthResolver],
-  register: (container: any, context: GlobalContext) => {
+  register: (container, context: GlobalContext) => {
     // Register resolvers
     context.resolvers['Auth'] = authPlugin.resolvers ?? [];
 

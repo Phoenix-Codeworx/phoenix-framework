@@ -5,8 +5,8 @@ import { User } from '../models/user';
 import { UserService } from '../services/user-service.ts';
 import { Service } from 'typedi';
 import jwt from 'jsonwebtoken';
-import { getEnforcer } from '../../../rbac';
-import env from '../../../config/config.ts';
+import { getEnforcer } from '@phoenix-framework/core/src/rbac.js'
+import env from '@phoenix-framework/core/src/config/config.js';
 
 @Service() // Register AuthResolver with Typedi
 @Resolver()

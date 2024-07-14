@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 import { Inject, Service } from 'typedi';
 import { Sample } from '../models/sample';
 import { SampleService } from '../services/sample-service';
-import FunctionRegistry from '../../function-registry';
+import FunctionRegistry from '@phoenix-framework/core/src/plugins/function-registry.js';
 
 @Service()
 @Resolver()

@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { User, UserModel } from '../models/user';
 import bcrypt from 'bcrypt';
-import { getEnforcer } from '../../../rbac.ts';
+import { getEnforcer } from '@phoenix-framework/core/src/rbac.js';
 
 @Service()
 export class UserService {

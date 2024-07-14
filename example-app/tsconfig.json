@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "../",  // Set rootDir to the monorepo root
+    "module": "ESNext",
+    "target": "ESNext"
+  },
+  "include": ["src/**/*", "../core/src/**/*"],  // Include both example-app and core source files
+  "exclude": ["node_modules"]
+}

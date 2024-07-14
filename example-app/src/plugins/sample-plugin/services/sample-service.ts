@@ -1,8 +1,8 @@
 import { Service } from 'typedi';
 import { Sample, SampleModel } from '../models/sample';
-import KafkaEventService from '../../../event/kafka-event-service';
+import { KafkaEventService } from '@phoenix-framework/core/src/event/kafka-event-service.js';
 import { Queue } from 'bullmq';
-import logger from '../../../config/logger.ts';
+import logger from '@phoenix-framework/core/src/config/logger.js';
 
 @Service()
 export class SampleService {

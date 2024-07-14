@@ -1,12 +1,12 @@
 import { Container } from 'typedi';
 import { getModelForClass } from '@typegoose/typegoose';
-import { type GlobalContext } from '../global-context';
+import { type GlobalContext } from '@phoenix-framework/core/src/plugins/global-context.js';
+import logger from '@phoenix-framework/core/src/config/logger.js';
 import { Sample } from './models/sample';
 import { SampleResolver } from './resolvers/sample-resolver';
 import { SampleService } from './services/sample-service';
-import KafkaEventService from '../../event/kafka-event-service';
+import { KafkaEventService } from '@phoenix-framework/core/src/event/kafka-event-service.js';
 import { Queue, Job } from 'bullmq';
-import logger from '../../config/logger.ts';
 
 const loggerCtx = { context: 'sample-plugin/index' };
 
@@ -36,18 +36,18 @@ export default {
     container.set('sampleQueue', sampleQueue);
 
     // Register SampleService and KafkaEventService with typedi
-    container.set(SampleService, new SampleService(Container.get(KafkaEventService), sampleQueue));
+    const eventService = container.get(KafkaEventService); // Ensure KafkaEventService is registered
+    container.set(SampleService, new SampleService(eventService, sampleQueue));
 
     // Ensure SampleResolver is added to context resolvers
     context.resolvers['Sample'] = [SampleResolver];
 
     // Register the topic with KafkaEventService
-    const eventService = Container.get(KafkaEventService);
     eventService.registerTopic('sampleCreated');
 
     // Set up event handlers using the centralized event service
     eventService.subscribeToEvent('sampleCreated', (sample) => {
-      logger.debug('Received sampleCreated event:', sample)
+      logger.debug('Received sampleCreated event:', sample);
       logger.info(`Sample created: ${sample}`, loggerCtx);
       // Additional handling logic here
     });

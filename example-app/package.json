@@ -1,0 +1,18 @@
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "bun run src/index.js"
+  },
+  "dependencies": {
+    "@phoenix-framework/core": "file:../core",
+    "graphql": "^16.8.1",
+    "type-graphql": "^2.0.0-rc.1",
+    "typedi": "^0.10.0",
+    "mongoose": "^8.4.1",
+    "bullmq": "^5.8.2",
+    "express": "^4.19.2"
+  }
+}
