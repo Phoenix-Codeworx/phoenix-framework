@@ -26,9 +26,11 @@ To install dependencies:
 bun install
 ```
 
-To run:
+
+To create .env file and run:
 
 ```bash
+cp .env.example .env
 bun run start
 ```
 

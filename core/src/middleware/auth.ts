@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import jwt, { type JwtPayload } from 'jsonwebtoken';
 import logger from '../config/logger.ts';
+import env from '../config/config.ts';
 
 const loggerCtx = { context: 'auth-middleware' };
 
@@ -18,7 +19,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   }
 
   try {
-    const secret = process.env.JWT_SECRET;
+    const secret = env.JWT_SECRET;
     if (!secret) {
       throw new Error('JWT_SECRET is not defined');
     }
