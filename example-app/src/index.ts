@@ -29,8 +29,8 @@ async function loadPlugins(): Promise<string[]> {
 async function runApp() {
   try {
     const pluginDirs = await loadPlugins();
-    await startApp(pluginDirs); // Pass the plugin directories to the core's startApp
-    logger.info(`Server started, version ${packageJson.version}`, 'exampleApp-index');
+    await startApp(pluginDirs);
+    logger.info(`Application initialized, version ${packageJson.version}`);
   } catch (error) {
     logger.error(error);
     process.exit(1);

@@ -5,11 +5,10 @@ import { statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import logger from '../config/logger.js';
-import mongoose, { type Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { type GlobalContext } from './global-context.js';
 import { type Plugin } from './plugin-interface.js';
 import { Queue, Worker, QueueEvents } from 'bullmq';
-
 
 const loggerCtx = { context: 'plugin-loader' };
 const __filename = fileURLToPath(import.meta.url);
@@ -110,7 +109,7 @@ class PluginLoader {
       return await buildSchema({
         resolvers: allResolvers as unknown as NonEmptyArray<Function>,
         container: Container,
-        emitSchemaFile: join(__dirname, '../../schema.graphql'),
+        emitSchemaFile: true,
       });
     } catch (error) {
       logger.error(`Error building schema: ${error}`, loggerCtx);
