@@ -8,11 +8,7 @@ import { Item } from '../models/cart';
 @Service()
 @Resolver(() => Cart)
 export class CartResolver {
-  private cartService: CartService;
-
-  constructor() {
-    this.cartService = new CartService();
-  }
+  constructor(private readonly cartService: CartService) {}
 
   @Query(() => [Cart])
   async getCarts(): Promise<Cart[]> {

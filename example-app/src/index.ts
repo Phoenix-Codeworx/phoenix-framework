@@ -30,7 +30,7 @@ async function runApp() {
   try {
     const pluginDirs = await loadPlugins();
     await startApp(pluginDirs); // Pass the plugin directories to the core's startApp
-    logger.info(`Server started, version ${packageJson.version}`);
+    logger.info(`Server started, version ${packageJson.version}`, 'exampleApp-index');
   } catch (error) {
     logger.error(error);
     process.exit(1);

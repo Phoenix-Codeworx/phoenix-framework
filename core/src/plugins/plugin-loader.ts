@@ -9,7 +9,7 @@ import mongoose, { type Schema } from 'mongoose';
 import { type GlobalContext } from './global-context.js';
 import { type Plugin } from './plugin-interface.js';
 import { Queue, Worker, QueueEvents } from 'bullmq';
-import env from '../config/config.js';
+
 
 const loggerCtx = { context: 'plugin-loader' };
 const __filename = fileURLToPath(import.meta.url);
@@ -24,6 +24,7 @@ class PluginLoader {
     return {
       models: {},
       resolvers: {},
+      services: {},
       extendModel: this.extendModel.bind(this),
       extendResolvers: this.extendResolvers.bind(this),
       wrapResolver: this.wrapResolver.bind(this),
@@ -62,8 +63,10 @@ class PluginLoader {
     resolverArray[originalResolverIndex].prototype[resolverName] = wrapper(originalResolver);
   }
 
-  loadPlugins(pluginDirs: string[]): void {
-    pluginDirs.forEach(this.loadPlugin.bind(this));
+  async loadPlugins(pluginDirs: string[]): Promise<void> {
+    for (const pluginDir of pluginDirs) {
+      await this.loadPlugin(pluginDir);
+    }
   }
 
   private async loadPlugin(pluginDir: string): Promise<void> {

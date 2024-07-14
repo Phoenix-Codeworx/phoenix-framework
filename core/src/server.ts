@@ -1,6 +1,5 @@
-import 'reflect-metadata';
-import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import { ApolloServer } from 'apollo-server-express';
+import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import env from './config/config.js';
 import logger from './config/logger.js';
 import { authenticate } from './middleware/auth.js';
@@ -10,11 +9,12 @@ import sanitizeLog from './sanitize-log.js';
 import { initializeSharedResources } from './shared.js';
 import { startWorker } from './worker.js';
 import { getEnforcer } from './rbac.js';
-import type PluginLoader from './plugins/plugin-loader.js';
+import PluginLoader from './plugins/plugin-loader.js';
 
 const loggerCtx = { context: 'server' };
 
 async function startServer(pluginLoader: PluginLoader) {
+  console.log('startServer');
   try {
     const schema = await pluginLoader.createSchema();
 
@@ -72,7 +72,7 @@ async function startServer(pluginLoader: PluginLoader) {
     });
 
     server.applyMiddleware({ app });
-
+    console.log('applyMiddleware');
     const port = env.PORT;
     app.listen(port, () => {
       logger.info(`Server is running at http://localhost:${port}${server.graphqlPath}`, { context: 'server' });
@@ -82,23 +82,10 @@ async function startServer(pluginLoader: PluginLoader) {
   }
 }
 
-async function startApp(pluginDirs: string[]) {
+export async function startApp(pluginDirs: string[]) {
   const pluginLoader = await initializeSharedResources(pluginDirs);
 
-  switch (env.MODE) {
-    case 'server':
-      await startServer(pluginLoader);
-      break;
-    case 'worker':
-      await startWorker(pluginLoader);
-      break;
-    case 'dev':
-      await startServer(pluginLoader);
-      await startWorker(pluginLoader, true); // Pass a flag to indicate dev mode
-      break;
-    default:
-      logger.error('Unknown mode specified. Please set MODE to "server", "worker", or "dev".', loggerCtx);
-  }
+  // Start the server
+  await startServer(pluginLoader);
+  await startWorker(pluginDirs, env.MODE === 'dev');
 }
-
-export { startApp };

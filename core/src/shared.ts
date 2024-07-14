@@ -7,13 +7,14 @@ import PluginLoader from './plugins/plugin-loader.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-async function initializeSharedResources(pluginDirs: string[]) {
+async function initializeSharedResources(pluginDirs: string[]): Promise<PluginLoader> {
+  if (!pluginDirs) {
+    throw new Error('pluginDirs must be provided');
+  }
+
   const pluginLoader = new PluginLoader();
-
-  pluginLoader.loadPlugins(pluginDirs);
+  await pluginLoader.loadPlugins(pluginDirs);
   pluginLoader.initializePlugins();
-
-  logger.info('Shared resources initialized');
   return pluginLoader;
 }
 

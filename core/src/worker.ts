@@ -1,14 +1,17 @@
-
-import logger from './config/logger';
-import { initializeSharedResources } from './shared';
-import type PluginLoader from './plugins/plugin-loader';
+import logger from './config/logger.js';
+import { initializeSharedResources } from './shared.js';
+import PluginLoader from './plugins/plugin-loader.js';
 
 const loggerCtx = { context: 'worker' };
 
-export async function startWorker(pluginLoader: PluginLoader, isDevMode = false) {
+export async function startWorker(pluginDirs: string[], isDevMode = false) {
+  let pluginLoader: PluginLoader;
   try {
-    if (!isDevMode) {
-      pluginLoader = await initializeSharedResources();
+    pluginLoader = await initializeSharedResources(pluginDirs);
+
+    if (isDevMode) {
+      // Additional development mode-specific logic
+      logger.info('Worker running in development mode', loggerCtx);
     }
 
     pluginLoader.initializeQueues();
